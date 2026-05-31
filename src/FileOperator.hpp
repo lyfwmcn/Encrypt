@@ -21,10 +21,6 @@ namespace Hsr {
 
         void decrypt(const std::string& key);
 
-        void hexPrint() const;
-
-        void hexPrint(size_t maxBytes) const;
-
         static bool hasSuffix(const std::string& fileName, const std::string& suffix);
     };
 }

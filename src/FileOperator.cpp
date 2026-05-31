@@ -1,8 +1,6 @@
 #include "FileOperator.hpp"
 #include <fstream>
-#include <iostream>
 #include <functional>
-#include <stdexcept>
 #include "Config.hpp"
 
 void Hsr::FileOperator::read(const std::string& filePath, bool isLockedFile) {
@@ -47,6 +45,9 @@ void Hsr::FileOperator::write(const std::string& filePath, bool isLockedFile) co
 }
 
 void Hsr::FileOperator::encrypt(const std::string& key) {
+    if (key.empty()) {
+        throw std::invalid_argument("key can't be null");
+    }
     size_t len {key.size()};
     size_t size {data.size()};
     for (size_t i = 0; i < size; ++i) {
@@ -55,36 +56,10 @@ void Hsr::FileOperator::encrypt(const std::string& key) {
 }
 
 void Hsr::FileOperator::decrypt(const std::string& key) {
-    encrypt(key);
-}
-
-void Hsr::FileOperator::hexPrint() const {
-    hexPrint(data.size());
-}
-
-void Hsr::FileOperator::hexPrint(size_t maxBytes) const {
-    std::function<unsigned int(char)> helperFunc1 {
-        [](char c) -> unsigned int {
-            int x {static_cast<int>(c)};
-            return x >= 0 ? static_cast<unsigned int>(x) : static_cast<unsigned int>(256 + x);
-        }
-    };
-    std::function<char(unsigned int)> helperFunc2 {
-        [](unsigned int v) -> char {
-            return v < 10 ? v + 48 : v + 55;
-        }
-    };
-    size_t size {data.size() <= maxBytes ? data.size() : maxBytes};
-    for (size_t i = 0; i < size; ++i) {
-        unsigned int c {helperFunc1(data[i])};
-        unsigned int highValue {c / 16};
-        unsigned int lowValue {c % 16};
-        std::cout << helperFunc2(highValue) << helperFunc2(lowValue);
-        if (i + 1 < size) {
-            std::cout << " ";
-        }
+    if (key.empty()) {
+        throw std::invalid_argument("key can't be null");
     }
-    std::cout << std::endl;
+    encrypt(key);
 }
 
 bool Hsr::FileOperator::hasSuffix(const std::string& fileName, const std::string& suffix) {
